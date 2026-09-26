@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <title>Simple Flappy Bird</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="stage" id="stage">
+      <canvas id="game"></canvas>
+
+      <!-- ========== HUD ========== -->
+      <div class="hud" id="hud">
+        <div class="hud-top">
+          <div class="hud-left">
+            <div class="hud-score"><b id="hudScore">0</b><span id="hudUnit"></span></div>
+            <div class="hud-meta">
+              <span class="tagmode" id="hudMode"></span>
+              <span><span data-i18n="hud.distance">Distance</span> <b id="hudDist">0 m</b></span>
+              <span><span data-i18n="hud.coins">Coins</span> <b id="hudCoins">0</b></span>
+            </div>
+          </div>
+          <div class="hud-side">
+            <div><label data-i18n="hud.speed">Speed</label><b id="hudSpeed">x1.00</b></div>
+            <div><label data-i18n="hud.rank">Rank</label><b id="hudRank">—</b></div>
+            <div><label data-i18n="hud.best">Best</label><b id="hudPB">0</b></div>
+            <div><label data-i18n="hud.restarts">Restarts</label><b id="hudRestarts">0</b></div>
+          </div>
+        </div>
+        <div class="hud-biome">
+          <b id="hudBiome" data-i18n="biome.forest">Forest</b>
+          <span id="hudTunnel" data-i18n="hud.tunnelNone">Next tunnel —</span>
+        </div>
+        <p class="hud-hint">
+          <span data-i18n="hud.hint">Space / tap to flap · R to restart · P to pause</span>
+          <button id="btnGod" class="god-btn" type="button" data-i18n="god.off" data-i18n-title="god.title">
+            God off
+          </button>
+        </p>
+      </div>
+
+      <!-- ========== main menu ========== -->
+      <div class="overlay hidden" id="menu">
+        <div class="panel">
+          <h1 data-i18n="brand.name">Simple Flappy Bird</h1>
+          <p class="sub" data-i18n="menu.sub">One life, endless gates, a new biome after every tunnel</p>
+
+          <div class="modes" id="menuModes">
+            <button class="mode-btn active" data-mode="coin" data-i18n="mode.coin.name">Coin mode</button>
+            <button class="mode-btn" data-mode="distance" data-i18n="mode.distance.name">Distance mode</button>
+          </div>
+          <p class="mode-hint" id="modeHint"></p>
+
+          <div class="rows">
+            <div>
+              <label data-i18n="menu.trackLength">Track</label
+              ><b data-i18n="menu.trackInfinite">Endless (until you crash)</b>
+            </div>
+            <div><label data-i18n="menu.bestHere">Best here</label><b id="menuBest">0</b></div>
+            <div><label data-i18n="menu.attemptsHere">Attempts</label><b id="menuAttempts">0</b></div>
+          </div>
+
+          <div class="seedbox">
+            <div class="seedline">
+              <span data-i18n="menu.seedLabel">Track code</span><code id="seedLabel">FLPY-XXXX</code>
+              <button id="btnCopySeed" class="mini" data-i18n="menu.copy">Copy</button>
+              <button id="btnNewSeed" class="mini" data-i18n="menu.newSeed">New track</button>
+            </div>
+            <div class="seedline">
+              <input
+                id="seedInput"
+                data-i18n-ph="menu.seedPlaceholder"
+                placeholder="Paste a track code to fly the very same track"
+              />
+              <button id="btnUseSeed" class="mini" data-i18n="menu.run">Fly</button>
+            </div>
+          </div>
+
+          <div class="top3">
+            <label data-i18n="menu.top3">Top 3 on this track</label>
+            <ol id="menuTop3"></ol>
+          </div>
+
+          <div class="history">
+            <label data-i18n="menu.history">Recent runs</label>
+            <div id="menuHistory" class="chips"></div>
+          </div>
+
+          <button id="btnStart" class="primary" data-i18n="menu.start">Start (Space)</button>
+          <button id="btnBoardMenu" class="ghost" data-i18n="menu.viewBoard">Leaderboard</button>
+
+          <details>
+            <summary data-i18n="help.summary">How to play / what the coins and mechanisms are</summary>
+            <ul data-i18n-list="help.items"></ul>
+          </details>
+
+          <details>
+            <summary data-i18n="about.summary">About this local demo</summary>
+            <ul data-i18n-list="about.items"></ul>
+          </details>
+        </div>
+      </div>
+
+      <!-- ========== result ========== -->
+      <div class="overlay hidden" id="over">
+        <div class="panel">
+          <div class="bigscore"><b id="overScore">0</b><span id="overUnit"></span></div>
+          <div class="badge" id="overBadge"></div>
+          <div class="rankline" id="overRank"></div>
+          <div class="diff" id="overDiff"></div>
+
+          <div class="rows">
+            <div><label data-i18n="over.mode">Mode</label><b id="overMode"></b></div>
+            <div><label data-i18n="over.distance">Distance</label><b id="overDist">0 m</b></div>
+            <div><label data-i18n="over.coins">Coins collected</label><b id="overCoins">0</b></div>
+            <div><label data-i18n="over.reason">Ended by</label><b id="overReason">—</b></div>
+            <div><label data-i18n="over.time">Run time</label><b id="overTime">0.0s</b></div>
+            <div><label data-i18n="over.restarts">Restarts</label><b id="overRestarts">0</b></div>
+          </div>
+
+          <button id="btnRestart" class="primary" data-i18n="over.restart">One more (R)</button>
+          <div class="btnrow">
+            <button id="btnNewSeed2" class="ghost" data-i18n="over.newSeed">New track</button>
+            <button id="btnBoardOver" class="ghost" data-i18n="over.board">Leaderboard</button>
+            <button id="btnMenu" class="ghost" data-i18n="over.menu">Main menu</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== leaderboard ========== -->
+      <div class="overlay hidden" id="board">
+        <div class="panel">
+          <h2 id="boardTitle" data-i18n="board.title">Leaderboard</h2>
+          <div class="modes" id="boardModes">
+            <button class="mode-btn active" data-mode="coin" data-i18n="mode.coin.name">Coin mode</button>
+            <button class="mode-btn" data-mode="distance" data-i18n="mode.distance.name">Distance mode</button>
+          </div>
+          <p class="sub" id="boardStats"></p>
+          <ul class="board" id="boardList"></ul>
+          <div class="namerow">
+            <input id="boardName" maxlength="12" data-i18n-ph="board.namePlaceholder" placeholder="Your nickname" />
+            <button id="btnNameSave" class="mini" data-i18n="board.save">Save</button>
+          </div>
+          <p class="note" id="boardRemote"></p>
+          <button id="btnBoardClose" class="primary" data-i18n="board.back">Back</button>
+        </div>
+      </div>
+
+      <!-- ========== pause ========== -->
+      <div class="overlay hidden" id="pause">
+        <div class="panel narrow">
+          <h2 data-i18n="pause.title">Paused</h2>
+          <p class="sub" data-i18n="pause.sub">Switching away pauses automatically; come back and keep flying</p>
+          <button id="btnResume" class="primary" data-i18n="pause.resume">Resume (P)</button>
+          <button id="btnQuit" class="ghost" data-i18n="pause.quit">Main menu</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+      <button id="langBtn" class="lang-btn" type="button" data-i18n="lang.button" data-i18n-title="lang.title">
+        中文
+      </button>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/leaderboard.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+</html>

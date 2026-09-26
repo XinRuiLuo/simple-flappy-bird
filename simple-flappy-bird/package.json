@@ -1,0 +1,22 @@
+{
+  "name": "simple-flappy-bird",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A dependency-free flappy game with endless seeded tracks, 25 biomes, 20 difficulty tiers and two leaderboards — fully configurable and bilingual.",
+  "keywords": [
+    "game",
+    "canvas",
+    "flappy",
+    "javascript",
+    "i18n"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "start": "npx --yes serve -l 8765 .",
+    "format": "npx --yes prettier --write \"**/*.{js,css,html,md,json}\"",
+    "format:check": "npx --yes prettier --check \"**/*.{js,css,html,md,json}\""
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
